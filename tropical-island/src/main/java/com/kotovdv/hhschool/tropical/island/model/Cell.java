@@ -46,9 +46,6 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "Cell{" +
-                "rowNumber=" + rowNumber +
-                ", columnNumber=" + columnNumber +
-                '}';
+        return String.format("[%d,%d]", rowNumber, columnNumber);
     }
 }

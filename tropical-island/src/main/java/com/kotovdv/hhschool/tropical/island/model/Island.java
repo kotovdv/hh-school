@@ -71,10 +71,10 @@ public class Island {
 
 
     public boolean isBorder(int row, int column) {
-        if (row == 0 || row == (cellCount() - 1)) {
+        if (row == 0 || row == (rowCount() - 1)) {
             return true;
         } else {
-            return column == 0 || column == (rowCount() - 1);
+            return column == 0 || column == (cellCount() - 1);
         }
     }
 
@@ -84,6 +84,10 @@ public class Island {
 
     public boolean isCellPresent(int row, int column) {
         return table.contains(row, column);
+    }
+
+    public boolean isLowland(Cell cell) {
+        return isLowland(cell.getRowNumber(), cell.getColumnNumber());
     }
 
     public boolean isLowland(int row, int column) {

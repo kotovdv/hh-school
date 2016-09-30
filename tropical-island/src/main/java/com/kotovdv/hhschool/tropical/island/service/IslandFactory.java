@@ -14,8 +14,8 @@ public class IslandFactory {
     public Island createIsland(int n, int m, List<Integer> values) {
         Table<Integer, Integer, Integer> table = HashBasedTable.create();
 
-        for (int i = 0, k = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
+        for (int i = 0, k = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
                 table.put(i, j, values.get(k++));
             }
         }

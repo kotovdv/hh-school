@@ -29,21 +29,7 @@ public class FloodingSimulator {
 
         Island floodedIsland = new Island(HashBasedTable.create(island.getTable()));
 
-        for (int i = 1; i < floodedIsland.rowCount(); i++) {
-            for (int j = 1; j < floodedIsland.cellCount(); j++) {
-                if (floodedIsland.isLowland(i, j)) {
-                    Cell currentCell = Cell.of(i, j);
-
-                    FloodingQueueItem queueItem = new FloodingQueueItem(currentCell, currentCell);
-
-                    if (naiveFlood(floodedIsland, queueItem)) {
-                        i = 1;
-                        j = 1;
-                    }
-                }
-
-            }
-        }
+        inDepthFlood(floodedIsland, new FloodingQueueItem(Cell.of(1, 1), Cell.of(1, 1)));
 
         return floodedIsland;
     }
@@ -52,8 +38,54 @@ public class FloodingSimulator {
         return island.rowCount() < 3 || island.cellCount() < 3;
     }
 
+    private void inDepthFlood(Island island, FloodingQueueItem initialItem) {
+        Set<Cell> visitedCells = new HashSet<>();
+        Map<FloodingQueueItem, Boolean> result = new HashMap<>();
+        Deque<FloodingQueueItem> queue = new LinkedList<>();
+        queue.add(initialItem);
 
-    private boolean naiveFlood(Island island, FloodingQueueItem queueItem) {
+        while (!queue.isEmpty()) {
+            FloodingQueueItem currentItem = queue.poll();
+            Cell currentCell = currentItem.getCurrentCell();
+
+            visitedCells.add(currentCell);
+
+            if (island.isLowland(currentCell)) {
+                result.put(currentItem, tryToFlood(island, currentItem));
+            }
+
+            boolean needFlooding = true;
+            for (Function<Cell, Cell> sideFunction : sideFunctions) {
+                Cell nextCell = sideFunction.apply(currentCell);
+
+                if (visitedCells.contains(nextCell)) {
+                    continue;
+                }
+
+                if (island.isBorder(nextCell) || nextCell.equals(currentItem.getPreviousCell())) {
+                    continue;
+                }
+
+
+                FloodingQueueItem nextItem = new FloodingQueueItem(nextCell, currentCell);
+                Boolean flag = result.get(nextItem);
+                if (flag == null) {
+                    queue.addFirst(currentItem);
+                    queue.addFirst(nextItem);
+                    needFlooding = false;
+
+                } else {
+                    needFlooding = flag;
+                }
+            }
+
+            if (needFlooding) {
+                result.put(currentItem, tryToFlood(island, currentItem));
+            }
+        }
+    }
+
+    private boolean tryToFlood(Island island, FloodingQueueItem queueItem) {
         Queue<FloodingQueueItem> queue = new LinkedList<>();
         queue.add(queueItem);
         int initialItemValue = island.value(queueItem.getCurrentCell());
@@ -79,11 +111,6 @@ public class FloodingSimulator {
             for (Function<Cell, Cell> sideFunction : sideFunctions) {
                 Cell nextCell = sideFunction.apply(currentCell);
 
-                //No need to process it, lets go to the next one
-                if (isTheCellWeCameFrom(nextCell, currentItem.getPreviousCell())) {
-                    continue;
-                }
-
                 int currentValue = island.value(currentCell);
                 int nextValue = island.value(nextCell);
 
@@ -105,10 +132,6 @@ public class FloodingSimulator {
         temporaryFloodedCells.forEach(cell -> island.setValue(cell, floodingValue));
 
         return true;
-    }
-
-    private boolean isTheCellWeCameFrom(Cell previousCell, Cell nextCell) {
-        return nextCell.equals(previousCell);
     }
 
     private static class AboveCellFunction implements Function<Cell, Cell> {
