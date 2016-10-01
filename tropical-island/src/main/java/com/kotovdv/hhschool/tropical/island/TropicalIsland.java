@@ -2,7 +2,7 @@ package com.kotovdv.hhschool.tropical.island;
 
 import com.kotovdv.hhschool.tropical.island.logic.FloodingSimulator;
 import com.kotovdv.hhschool.tropical.island.model.Island;
-import com.kotovdv.hhschool.tropical.island.service.IslandScanner;
+import com.kotovdv.hhschool.tropical.island.service.IslandFactory;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -19,7 +19,7 @@ public class TropicalIsland {
     }
 
     public void solve(final InputStream inputStream, final PrintStream outputStream) {
-        List<Island> islands = new IslandScanner().read(inputStream);
+        List<Island> islands = new IslandFactory().create(inputStream);
 
         FloodingSimulator floodingSimulator = new FloodingSimulator();
         islands.forEach(island -> {
