@@ -4,6 +4,8 @@ import com.kotovdv.hhschool.tropical.island.logic.FloodingSimulator;
 import com.kotovdv.hhschool.tropical.island.model.Island;
 import com.kotovdv.hhschool.tropical.island.service.IslandScanner;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -11,18 +13,19 @@ import java.util.List;
  */
 public class TropicalIsland {
 
-
     public static void main(String[] args) {
-        IslandScanner islandScanner = new IslandScanner();
-        List<Island> islands = islandScanner.read(System.in);
+        TropicalIsland tropicalIsland = new TropicalIsland();
+        tropicalIsland.solve(System.in, System.out);
+    }
+
+    public void solve(final InputStream inputStream, final PrintStream outputStream) {
+        List<Island> islands = new IslandScanner().read(inputStream);
 
         FloodingSimulator floodingSimulator = new FloodingSimulator();
         islands.forEach(island -> {
             Island floodedIsland = floodingSimulator.flood(island);
-            System.out.println(floodedIsland.sum() - island.sum());
+            outputStream.println(floodedIsland.sum() - island.sum());
         });
-
-
     }
 
 

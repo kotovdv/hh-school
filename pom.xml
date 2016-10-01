@@ -17,6 +17,7 @@
         <guava.version>19.0</guava.version>
         <testng.version>6.9.13.6</testng.version>
         <assertj-core.version>3.5.2</assertj-core.version>
+        <poi-ooxml.version>3.15</poi-ooxml.version>
     </properties>
 
     <build>
@@ -50,7 +51,11 @@
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj-core.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi-ooxml.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
