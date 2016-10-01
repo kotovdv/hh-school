@@ -3,7 +3,6 @@ package com.kotovdv.hhschool.tropical.island.logic;
 import com.google.common.collect.HashBasedTable;
 import com.kotovdv.hhschool.tropical.island.model.Island;
 import com.kotovdv.hhschool.tropical.island.model.IslandCell;
-import com.kotovdv.hhschool.tropical.island.model.IslandStep;
 
 import java.util.*;
 
@@ -19,61 +18,51 @@ public class FloodingSimulator {
             return island;
         }
 
-        Island floodedIsland = new Island(HashBasedTable.create(island.getTable()));
+        Island floodedIsland = createCopy(island);
 
-        startFloodingProcess(floodedIsland, new IslandStep(IslandCell.of(1, 1), IslandCell.of(1, 1)));
+        startFloodingProcess(floodedIsland, IslandCell.of(1, 1));
 
         return floodedIsland;
     }
 
-    /**
-     * It is impossible to flood island that is less then 3x3
-     */
-    private boolean isNotFloodable(Island island) {
-        return island.rowCount() < 3 || island.cellCount() < 3;
-    }
-
-    private void startFloodingProcess(Island island, IslandStep initialItem) {
-        Deque<IslandStep> queue = new LinkedList<>();
-        queue.add(initialItem);
+    private void startFloodingProcess(Island island, IslandCell initialCell) {
+        Deque<IslandCell> queue = new LinkedList<>();
+        queue.add(initialCell);
 
         Set<IslandCell> visitedCells = new HashSet<>();
         while (!queue.isEmpty()) {
-            IslandStep currentItem = queue.poll();
-
-            IslandCell currentCell = currentItem.getCurrentCell();
-            visitedCells.add(currentCell);
+            IslandCell currentCell = queue.poll();
 
             if (islandNavigator.isLowland(island, currentCell)) {
-                floodIslandCell(island, currentItem);
+                floodIslandCell(island, currentCell);
             }
 
+            visitedCells.add(currentCell);
+
+            //Process surrounding sides
             for (IslandCell nextCell : islandNavigator.getSurroundingCells(island, currentCell)) {
-                if (visitedCells.contains(nextCell)) {
+                if (hasBeenVisited(visitedCells, nextCell)) {
                     continue;
                 }
 
-                if (island.isBorder(nextCell) || nextCell.equals(currentItem.getPreviousCell())) {
+                if (island.isBorder(nextCell)) {
                     continue;
                 }
 
-                IslandStep nextItem = new IslandStep(nextCell, currentCell);
-                queue.addFirst(currentItem);
-                queue.addFirst(nextItem);
+                queue.addFirst(currentCell);
+                queue.addFirst(nextCell);
             }
         }
     }
 
-    private boolean floodIslandCell(Island island, IslandStep queueItem) {
-        Queue<IslandStep> queue = new LinkedList<>();
-        queue.add(queueItem);
-        int initialItemValue = island.value(queueItem.getCurrentCell());
+    private boolean floodIslandCell(Island island, IslandCell islandCell) {
+        Queue<IslandCell> queue = new LinkedList<>();
+        queue.add(islandCell);
 
         Set<IslandCell> temporaryFloodedCells = new HashSet<>();
         int minValue = 1001;
         while (!queue.isEmpty()) {
-            IslandStep currentItem = queue.poll();
-            IslandCell currentCell = currentItem.getCurrentCell();
+            IslandCell currentCell = queue.poll();
 
             //It is impossible to flood area, that ends in a border
             if (island.isBorder(currentCell)) {
@@ -81,7 +70,7 @@ public class FloodingSimulator {
             }
 
             //Skip processing if it was processed already
-            if (temporaryFloodedCells.contains(currentCell)) {
+            if (hasBeenVisited(temporaryFloodedCells, currentCell)) {
                 continue;
             }
 
@@ -91,6 +80,7 @@ public class FloodingSimulator {
                 int currentValue = island.value(currentCell);
                 int nextValue = island.value(nextCell);
 
+                int initialItemValue = island.value(currentCell);
                 if (nextValue < minValue && nextValue != initialItemValue) {
                     minValue = nextValue;
                 }
@@ -99,7 +89,7 @@ public class FloodingSimulator {
                 if (nextValue < currentValue) {
                     return false;
                 } else if (nextValue == currentValue) {
-                    queue.add(new IslandStep(nextCell, currentCell));
+                    queue.add(nextCell);
                 }
             }
 
@@ -109,6 +99,21 @@ public class FloodingSimulator {
         temporaryFloodedCells.forEach(cell -> island.setValue(cell, floodingValue));
 
         return true;
+    }
+
+    /**
+     * It is impossible to flood island that is less then 3x3
+     */
+    private boolean isNotFloodable(Island island) {
+        return island.rowCount() < 3 || island.cellCount() < 3;
+    }
+
+    private Island createCopy(Island island) {
+        return new Island(HashBasedTable.create(island.getTable()));
+    }
+
+    private boolean hasBeenVisited(Set<IslandCell> visitedCells, IslandCell nextCell) {
+        return visitedCells.contains(nextCell);
     }
 
 }
