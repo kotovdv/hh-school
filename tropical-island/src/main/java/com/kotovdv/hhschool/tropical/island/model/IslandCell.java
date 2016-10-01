@@ -3,16 +3,16 @@ package com.kotovdv.hhschool.tropical.island.model;
 /**
  * @author Dmitriy Kotov
  */
-public class Cell {
+public class IslandCell {
 
     private final int rowNumber;
     private final int columnNumber;
 
-    public static Cell of(int rowNumber, int columnNumber) {
-        return new Cell(rowNumber, columnNumber);
+    public static IslandCell of(int rowNumber, int columnNumber) {
+        return new IslandCell(rowNumber, columnNumber);
     }
 
-    private Cell(int rowNumber, int columnNumber) {
+    private IslandCell(int rowNumber, int columnNumber) {
         this.rowNumber = rowNumber;
         this.columnNumber = columnNumber;
     }
@@ -30,7 +30,7 @@ public class Cell {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Cell cell = (Cell) o;
+        IslandCell cell = (IslandCell) o;
 
         if (rowNumber != cell.rowNumber) return false;
         return columnNumber == cell.columnNumber;

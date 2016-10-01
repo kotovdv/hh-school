@@ -1,26 +1,18 @@
 package com.kotovdv.hhschool.tropical.island.logic;
 
 import com.google.common.collect.HashBasedTable;
-import com.kotovdv.hhschool.tropical.island.model.Cell;
 import com.kotovdv.hhschool.tropical.island.model.Island;
+import com.kotovdv.hhschool.tropical.island.model.IslandCell;
+import com.kotovdv.hhschool.tropical.island.model.IslandStep;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * @author Dmitriy Kotov
  */
 public class FloodingSimulator {
 
-    private final static List<Function<Cell, Cell>> sideFunctions = new ArrayList<>();
-
-    static {
-        sideFunctions.add(new AboveCellFunction());
-        sideFunctions.add(new RightCellFunction());
-        sideFunctions.add(new BelowCellFunction());
-        sideFunctions.add(new LeftCellFunction());
-    }
-
+    private final IslandNavigator islandNavigator = new IslandNavigator();
 
     public Island flood(Island island) {
         if (isNotFloodable(island)) {
@@ -29,7 +21,7 @@ public class FloodingSimulator {
 
         Island floodedIsland = new Island(HashBasedTable.create(island.getTable()));
 
-        inDepthFlood(floodedIsland, new FloodingQueueItem(Cell.of(1, 1), Cell.of(1, 1)));
+        inDepthFlood(floodedIsland, new IslandStep(IslandCell.of(1, 1), IslandCell.of(1, 1)));
 
         return floodedIsland;
     }
@@ -38,26 +30,24 @@ public class FloodingSimulator {
         return island.rowCount() < 3 || island.cellCount() < 3;
     }
 
-    private void inDepthFlood(Island island, FloodingQueueItem initialItem) {
-        Set<Cell> visitedCells = new HashSet<>();
-        Map<FloodingQueueItem, Boolean> result = new HashMap<>();
-        Deque<FloodingQueueItem> queue = new LinkedList<>();
+    private void inDepthFlood(Island island, IslandStep initialItem) {
+        Set<IslandCell> visitedCells = new HashSet<>();
+        Map<IslandStep, Boolean> result = new HashMap<>();
+        Deque<IslandStep> queue = new LinkedList<>();
         queue.add(initialItem);
 
         while (!queue.isEmpty()) {
-            FloodingQueueItem currentItem = queue.poll();
-            Cell currentCell = currentItem.getCurrentCell();
+            IslandStep currentItem = queue.poll();
+            IslandCell currentCell = currentItem.getCurrentCell();
 
             visitedCells.add(currentCell);
 
-            if (island.isLowland(currentCell)) {
+            if (islandNavigator.isLowland(island, currentCell)) {
                 result.put(currentItem, tryToFlood(island, currentItem));
             }
 
             boolean needFlooding = true;
-            for (Function<Cell, Cell> sideFunction : sideFunctions) {
-                Cell nextCell = sideFunction.apply(currentCell);
-
+            for (IslandCell nextCell : islandNavigator.getSurroundingCells(island, currentCell)) {
                 if (visitedCells.contains(nextCell)) {
                     continue;
                 }
@@ -66,8 +56,7 @@ public class FloodingSimulator {
                     continue;
                 }
 
-
-                FloodingQueueItem nextItem = new FloodingQueueItem(nextCell, currentCell);
+                IslandStep nextItem = new IslandStep(nextCell, currentCell);
                 Boolean flag = result.get(nextItem);
                 if (flag == null) {
                     queue.addFirst(currentItem);
@@ -85,16 +74,16 @@ public class FloodingSimulator {
         }
     }
 
-    private boolean tryToFlood(Island island, FloodingQueueItem queueItem) {
-        Queue<FloodingQueueItem> queue = new LinkedList<>();
+    private boolean tryToFlood(Island island, IslandStep queueItem) {
+        Queue<IslandStep> queue = new LinkedList<>();
         queue.add(queueItem);
         int initialItemValue = island.value(queueItem.getCurrentCell());
 
-        Set<Cell> temporaryFloodedCells = new HashSet<>();
+        Set<IslandCell> temporaryFloodedCells = new HashSet<>();
         int minValue = 1001;
         while (!queue.isEmpty()) {
-            FloodingQueueItem currentItem = queue.poll();
-            Cell currentCell = currentItem.getCurrentCell();
+            IslandStep currentItem = queue.poll();
+            IslandCell currentCell = currentItem.getCurrentCell();
 
             //It is impossible to flood area, that ends in border
             if (island.isBorder(currentCell)) {
@@ -108,9 +97,7 @@ public class FloodingSimulator {
 
             temporaryFloodedCells.add(currentCell);
 
-            for (Function<Cell, Cell> sideFunction : sideFunctions) {
-                Cell nextCell = sideFunction.apply(currentCell);
-
+            for (IslandCell nextCell : islandNavigator.getSurroundingCells(island, currentCell)) {
                 int currentValue = island.value(currentCell);
                 int nextValue = island.value(nextCell);
 
@@ -122,7 +109,7 @@ public class FloodingSimulator {
                 if (nextValue < currentValue) {
                     return false;
                 } else if (nextValue == currentValue) {
-                    queue.add(new FloodingQueueItem(nextCell, currentCell));
+                    queue.add(new IslandStep(nextCell, currentCell));
                 }
             }
 
@@ -132,38 +119,6 @@ public class FloodingSimulator {
         temporaryFloodedCells.forEach(cell -> island.setValue(cell, floodingValue));
 
         return true;
-    }
-
-    private static class AboveCellFunction implements Function<Cell, Cell> {
-
-        @Override
-        public Cell apply(Cell cell) {
-            return Cell.of(cell.getRowNumber() - 1, cell.getColumnNumber());
-        }
-    }
-
-    private static class BelowCellFunction implements Function<Cell, Cell> {
-
-        @Override
-        public Cell apply(Cell cell) {
-            return Cell.of(cell.getRowNumber() + 1, cell.getColumnNumber());
-        }
-    }
-
-    private static class LeftCellFunction implements Function<Cell, Cell> {
-
-        @Override
-        public Cell apply(Cell cell) {
-            return Cell.of(cell.getRowNumber(), cell.getColumnNumber() - 1);
-        }
-    }
-
-    private static class RightCellFunction implements Function<Cell, Cell> {
-
-        @Override
-        public Cell apply(Cell cell) {
-            return Cell.of(cell.getRowNumber(), cell.getColumnNumber() + 1);
-        }
     }
 
 }

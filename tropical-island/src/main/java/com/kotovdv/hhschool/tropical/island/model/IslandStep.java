@@ -1,23 +1,20 @@
-package com.kotovdv.hhschool.tropical.island.logic;
+package com.kotovdv.hhschool.tropical.island.model;
 
-import com.kotovdv.hhschool.tropical.island.model.Cell;
+public class IslandStep {
 
-class FloodingQueueItem {
+    private final IslandCell currentCell;
+    private final IslandCell previousCell;
 
-    private final Cell currentCell;
-    private final Cell previousCell;
-
-
-    FloodingQueueItem(Cell currentCell, Cell previousCell) {
+    public IslandStep(IslandCell currentCell, IslandCell previousCell) {
         this.currentCell = currentCell;
         this.previousCell = previousCell;
     }
 
-    public Cell getCurrentCell() {
+    public IslandCell getCurrentCell() {
         return currentCell;
     }
 
-    public Cell getPreviousCell() {
+    public IslandCell getPreviousCell() {
         return previousCell;
     }
 
@@ -27,7 +24,7 @@ class FloodingQueueItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FloodingQueueItem that = (FloodingQueueItem) o;
+        IslandStep that = (IslandStep) o;
 
         if (currentCell != null ? !currentCell.equals(that.currentCell) : that.currentCell != null) return false;
         return previousCell != null ? previousCell.equals(that.previousCell) : that.previousCell == null;
