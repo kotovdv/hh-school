@@ -21,32 +21,33 @@ public class FloodingSimulator {
 
         Island floodedIsland = new Island(HashBasedTable.create(island.getTable()));
 
-        inDepthFlood(floodedIsland, new IslandStep(IslandCell.of(1, 1), IslandCell.of(1, 1)));
+        startFloodingProcess(floodedIsland, new IslandStep(IslandCell.of(1, 1), IslandCell.of(1, 1)));
 
         return floodedIsland;
     }
 
+    /**
+     * It is impossible to flood island that is less then 3x3
+     */
     private boolean isNotFloodable(Island island) {
         return island.rowCount() < 3 || island.cellCount() < 3;
     }
 
-    private void inDepthFlood(Island island, IslandStep initialItem) {
-        Set<IslandCell> visitedCells = new HashSet<>();
-        Map<IslandStep, Boolean> result = new HashMap<>();
+    private void startFloodingProcess(Island island, IslandStep initialItem) {
         Deque<IslandStep> queue = new LinkedList<>();
         queue.add(initialItem);
 
+        Set<IslandCell> visitedCells = new HashSet<>();
         while (!queue.isEmpty()) {
             IslandStep currentItem = queue.poll();
-            IslandCell currentCell = currentItem.getCurrentCell();
 
+            IslandCell currentCell = currentItem.getCurrentCell();
             visitedCells.add(currentCell);
 
             if (islandNavigator.isLowland(island, currentCell)) {
-                result.put(currentItem, tryToFlood(island, currentItem));
+                floodIslandCell(island, currentItem);
             }
 
-            boolean needFlooding = true;
             for (IslandCell nextCell : islandNavigator.getSurroundingCells(island, currentCell)) {
                 if (visitedCells.contains(nextCell)) {
                     continue;
@@ -57,24 +58,13 @@ public class FloodingSimulator {
                 }
 
                 IslandStep nextItem = new IslandStep(nextCell, currentCell);
-                Boolean flag = result.get(nextItem);
-                if (flag == null) {
-                    queue.addFirst(currentItem);
-                    queue.addFirst(nextItem);
-                    needFlooding = false;
-
-                } else {
-                    needFlooding = flag;
-                }
-            }
-
-            if (needFlooding) {
-                result.put(currentItem, tryToFlood(island, currentItem));
+                queue.addFirst(currentItem);
+                queue.addFirst(nextItem);
             }
         }
     }
 
-    private boolean tryToFlood(Island island, IslandStep queueItem) {
+    private boolean floodIslandCell(Island island, IslandStep queueItem) {
         Queue<IslandStep> queue = new LinkedList<>();
         queue.add(queueItem);
         int initialItemValue = island.value(queueItem.getCurrentCell());
@@ -85,7 +75,7 @@ public class FloodingSimulator {
             IslandStep currentItem = queue.poll();
             IslandCell currentCell = currentItem.getCurrentCell();
 
-            //It is impossible to flood area, that ends in border
+            //It is impossible to flood area, that ends in a border
             if (island.isBorder(currentCell)) {
                 return false;
             }

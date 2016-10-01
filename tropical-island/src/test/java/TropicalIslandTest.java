@@ -14,8 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TropicalIslandTest {
 
 
+    //TODO DISABLE TEST LATER
     @Test(dataProviderClass = TropicalIslandDataProvider.class, dataProvider = "dataProvider")
-    public void testName(String input, String output) throws Exception {
+    public void testTropicalIslandFlooding(String input, String output) throws Exception {
         try (InputStream inputStream = new ByteArrayInputStream(input.getBytes());
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              PrintStream outputStream = new PrintStream(byteArrayOutputStream)) {
