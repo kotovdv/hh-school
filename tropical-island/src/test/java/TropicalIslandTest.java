@@ -16,7 +16,7 @@ public class TropicalIslandTest {
 
     //TODO DISABLE TEST LATER
     @Test(dataProviderClass = TropicalIslandDataProvider.class, dataProvider = "dataProvider")
-    public void testTropicalIslandFlooding(String input, String output) throws Exception {
+    public void testTropicalIslandFlooding(String input, String expectedOutput) throws Exception {
         try (InputStream inputStream = new ByteArrayInputStream(input.getBytes());
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              PrintStream outputStream = new PrintStream(byteArrayOutputStream)) {
@@ -24,8 +24,12 @@ public class TropicalIslandTest {
             TropicalIsland tropicalIsland = new TropicalIsland();
             tropicalIsland.solve(inputStream, outputStream);
 
-            String s = byteArrayOutputStream.toString("UTF-8");
-            assertThat(output.replaceAll("[^\\d]", "")).isEqualTo(s.replaceAll("[^\\d]", ""));
+            String actualOutput = byteArrayOutputStream.toString("UTF-8");
+            assertThat(getNumbersOnly(expectedOutput)).isEqualTo(getNumbersOnly(actualOutput));
         }
+    }
+
+    private String getNumbersOnly(String actualOutput) {
+        return actualOutput.replaceAll("[^\\d]", "");
     }
 }

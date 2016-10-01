@@ -55,50 +55,43 @@ public class FloodingSimulator {
         }
     }
 
-    private boolean floodIslandCell(Island island, IslandCell islandCell) {
+    private void floodIslandCell(Island island, IslandCell islandCell) {
         Queue<IslandCell> queue = new LinkedList<>();
         queue.add(islandCell);
 
-        Set<IslandCell> temporaryFloodedCells = new HashSet<>();
+        Set<IslandCell> visitedCells = new HashSet<>();
         int minValue = 1001;
         while (!queue.isEmpty()) {
             IslandCell currentCell = queue.poll();
 
-            //It is impossible to flood area, that ends in a border
-            if (island.isBorder(currentCell)) {
-                return false;
-            }
-
             //Skip processing if it was processed already
-            if (hasBeenVisited(temporaryFloodedCells, currentCell)) {
+            if (hasBeenVisited(visitedCells, currentCell)) {
                 continue;
             }
 
-            temporaryFloodedCells.add(currentCell);
+            visitedCells.add(currentCell);
 
             for (IslandCell nextCell : islandNavigator.getSurroundingCells(island, currentCell)) {
                 int currentValue = island.value(currentCell);
                 int nextValue = island.value(nextCell);
 
-                int initialItemValue = island.value(currentCell);
-                if (nextValue < minValue && nextValue != initialItemValue) {
+                //This path cant be flooded
+                if (nextValue < currentValue || (island.isBorder(nextCell) && nextValue == currentValue)) {
+                    return;
+                }
+
+                if (nextValue < minValue && nextValue != currentValue) {
                     minValue = nextValue;
                 }
 
-                //This path cant be flooded
-                if (nextValue < currentValue) {
-                    return false;
-                } else if (nextValue == currentValue) {
+                if (nextValue == currentValue) {
                     queue.add(nextCell);
                 }
             }
-
         }
 
         int floodingValue = minValue;
-        temporaryFloodedCells.forEach(cell -> island.setValue(cell, floodingValue));
-
-        return true;
+        visitedCells.forEach(cell -> island.setValue(cell, floodingValue));
     }
 
     /**

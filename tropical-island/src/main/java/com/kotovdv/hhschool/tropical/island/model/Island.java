@@ -84,9 +84,16 @@ public class Island {
 
     @Override
     public String toString() {
-        return "Island{" +
-                "table=" + table +
-                '}';
+        StringBuilder table = new StringBuilder();
+        for (int i = 0; i < rowCount(); i++) {
+            for (int j = 0; j < cellCount(); j++) {
+                table.append(value(i, j)).append(" ");
+            }
+            table.append(System.lineSeparator());
+        }
+
+
+        return table.toString();
     }
 
     public Table<Integer, Integer, Integer> getTable() {
