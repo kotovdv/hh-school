@@ -13,17 +13,21 @@ public class EndlessSequenceLogicTest {
 
     @DataProvider
     public static Object[][] dataProvider() {
-        int limit = 5000;
-        Object[][] args = new Object[limit][];
-        for (int i = 0, currentIndex = 0; i < limit; i++) {
-            String strValue = Integer.toString(i + 1);
-            currentIndex += strValue.length();
-            args[i] = new Object[]{
-                    i + 1, currentIndex - strValue.length() + 1
-            };
+        StringBuilder stringBuilder = new StringBuilder();
 
+        int MAX_VALUE = 5000;
+        for (int i = 1; i <= MAX_VALUE; i++) {
+            stringBuilder.append(Integer.toString(i));
         }
 
+        Object[][] args = new Object[MAX_VALUE][];
+        for (int i = 1; i <= MAX_VALUE; i++) {
+            String sequence = Integer.toString(i);
+            int firstIndex = stringBuilder.indexOf(sequence);
+            args[i - 1] = new Object[]{
+                    sequence, firstIndex + 1
+            };
+        }
 
         return args;
 
@@ -31,9 +35,10 @@ public class EndlessSequenceLogicTest {
 
 
     @Test(dataProvider = "dataProvider")
-    public void testGetIndexOf(int number, int expectedIndex) throws Exception {
+    public void testGetIndexOf(String sequence, int expectedIndex) throws Exception {
         EndlessSequenceLogic endlessSequenceLogic = new EndlessSequenceLogic();
-        int actualIndex = endlessSequenceLogic.getIndexOf(number);
+        int actualIndex = endlessSequenceLogic.getStartingIndexOf(sequence);
+
         assertThat(actualIndex).isEqualTo(expectedIndex);
     }
 

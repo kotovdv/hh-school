@@ -22,10 +22,8 @@ public class EndlessSequence {
         EndlessSequenceLogic endlessSequenceLogic = new EndlessSequenceLogic();
 
         sequence.forEach(currentSequence -> {
-            int firstAppropriateValue = endlessSequenceLogic.getFirstAppropriateValue(currentSequence);
-            System.out.println(firstAppropriateValue);
-            int indexOf = endlessSequenceLogic.getIndexOf(firstAppropriateValue);
-            outputStream.println(indexOf);
+            int startingIndex = endlessSequenceLogic.getStartingIndexOf(currentSequence);
+            outputStream.println(startingIndex);
         });
 
     }

@@ -1,20 +1,44 @@
 package com.kotovdv.hhschool.endless.sequence;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Dmitriy Kotov
  */
 public class EndlessSequenceLogic {
 
 
-    public int getIndexOf(int startingValue) {
-        int length = Integer.toString(startingValue).length();
+    public int getStartingIndexOf(String sequence) {
+        List<Integer> possibleOutputs = new ArrayList<>();
+        for (int groupSize = 1; groupSize <= sequence.length(); groupSize++) {
+            for (int startIndex = 1 - groupSize, counter = 0; counter < groupSize && (groupSize + startIndex) <= sequence.length(); startIndex++, counter++) {
+                int endIndex = groupSize + startIndex;
 
-        int index = 0;
-        index = getStartingIndex(startingValue, length, index);
-        index = index - length + 1;
+                String groupString = startIndex < 0
+                        ? createForUncompleted(sequence, groupSize, startIndex, endIndex)
+                        : sequence.substring(startIndex, endIndex);
 
+                if (groupString.isEmpty()) {
+                    continue;
+                }
 
-        return index;
+                int currentGroupValue = Integer.parseInt(groupString);
+
+                if (startIndex >= groupSize && doesNotMatchPreviousGroup(sequence, startIndex, currentGroupValue)) {
+                    continue;
+                }
+
+                if (checkSequence(sequence, endIndex, groupSize, currentGroupValue)) {
+                    int indexOf = getIndexOf(currentGroupValue);
+
+                    possibleOutputs.add(indexOf - startIndex);
+                }
+            }
+        }
+
+        return Collections.min(possibleOutputs);
     }
 
     private int getStartingIndex(int startingValue, int length, int index) {
@@ -30,50 +54,39 @@ public class EndlessSequenceLogic {
     }
 
 
-    public int getFirstAppropriateValue(String sequence) {
-        for (int groupSize = 1; groupSize <= sequence.length(); groupSize++) {
-            for (int startIndex = 1 - groupSize; startIndex < groupSize && (groupSize + startIndex) <= sequence.length(); startIndex++) {
-                int endIndex = groupSize + startIndex;
+    private int getIndexOf(int startingValue) {
+        int length = Integer.toString(startingValue).length();
 
-                String groupString = startIndex < 0
-                        ? createForUncompleted(sequence, groupSize, startIndex, endIndex)
-                        : sequence.substring(startIndex, endIndex);
+        int index = 0;
+        index = getStartingIndex(startingValue, length, index);
+        index = index - length + 1;
 
 
-                int currentGroupValue = Integer.parseInt(groupString);
-
-                if (startIndex >= groupSize && doesNotMatchPreviousGroup(sequence, startIndex, currentGroupValue)) {
-                    continue;
-                }
-
-                if (checkSequence(sequence, endIndex, groupSize, currentGroupValue)) {
-                    return currentGroupValue;
-                }
-            }
-        }
-
-        throw new RuntimeException();
+        return index;
     }
 
     private String createForUncompleted(String sequence, int groupSize, int startIndex, int endIndex) {
         String resultingGroupString;
-        String groupString = startIndex < 0
-                ? sequence.substring(0, endIndex)
-                : sequence.substring(startIndex, endIndex);
 
-        int nextGroupEndIndex = (endIndex + groupSize) <= sequence.length()
-                ? endIndex + groupString.length()
-                : sequence.length();
+        String groupString = sequence.substring(getSafeStartIndex(startIndex), endIndex);
+
+        int nextGroupEndIndex = getSafeEndIndex(sequence, endIndex + groupSize);
+
         String nextGroupString = sequence.substring(endIndex, nextGroupEndIndex);
 
         int i = Integer.parseInt(groupString);
+
+        if (nextGroupString.startsWith("0")) {
+            return "";
+        }
+
         if (Integer.toString(i + 1).length() > groupSize - 1) {
             resultingGroupString = String.valueOf(Integer.parseInt(nextGroupString) - 1) + groupString;
         } else {
-            resultingGroupString = nextGroupString + groupString;
+            resultingGroupString = nextGroupString.substring(0, groupSize - groupString.length()) + groupString;
         }
 
-        return resultingGroupString;
+        return resultingGroupString.substring(0, groupSize);
     }
 
     private int getNumberOfValuesBetweenRanks(int j) {
@@ -94,12 +107,10 @@ public class EndlessSequenceLogic {
         int previousGroupValue = previousNumber;
 
         for (int j = indexFrom; j < sequence.length(); ) {
-            int currentEndIndex = j + groupSize <= sequence.length()
-                    ? j + groupSize
-                    : sequence.length();
+            int currentEndIndex = getSafeEndIndex(sequence, j + groupSize);
 
             String currentGroup = sequence.substring(j, currentEndIndex);
-            if (currentGroup.length() != groupSize) {
+            if (currentGroup.length() != groupSize || Integer.toString(previousGroupValue + 1).length() > groupSize) {
                 String expectedNextValue = Integer.toString(previousGroupValue + 1);
 
                 return expectedNextValue.startsWith(currentGroup);
@@ -125,4 +136,15 @@ public class EndlessSequenceLogic {
 
         return !previousGroup.endsWith(sequence.substring(0, i));
     }
+
+    private int getSafeStartIndex(int unsafeIndex) {
+        return unsafeIndex >= 0 ? unsafeIndex : 0;
+    }
+
+    private int getSafeEndIndex(String sequence, int unsafeIndex) {
+        return unsafeIndex <= sequence.length()
+                ? unsafeIndex
+                : sequence.length();
+    }
+
 }
