@@ -1,4 +1,4 @@
-package data.provider;
+package com.kotovdv.hhschool.tests.common;
 
 /**
  * @author Dmitriy Kotov

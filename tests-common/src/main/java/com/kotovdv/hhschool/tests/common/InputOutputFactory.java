@@ -1,6 +1,9 @@
-package data.provider;
+package com.kotovdv.hhschool.tests.common;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.net.URL;
@@ -16,7 +19,22 @@ public class InputOutputFactory {
     private static final int OUTPUT_CELL = 1;
     private final DataFormatter formatter = new DataFormatter();
 
-    public List<InputOutput> create(String url, String sheetName) {
+    public Object[][] create(String url, String sheetName) {
+        List<InputOutput> inputOutputs = gather(url, sheetName);
+
+        Object[][] objects = new Object[inputOutputs.size()][1];
+        for (int i = 0; i < inputOutputs.size(); i++) {
+            InputOutput inputOutput = inputOutputs.get(i);
+            objects[i] = new Object[]{
+                    inputOutput.getInput(), inputOutput.getOutput()
+            };
+        }
+
+        return objects;
+    }
+
+
+    private List<InputOutput> gather(String url, String sheetName) {
         List<InputOutput> inputOutputs = new ArrayList<>();
 
         try (Workbook workbook = new XSSFWorkbook(new URL(url).openStream())) {

@@ -10,22 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
-    <artifactId>tropical-island</artifactId>
+    <artifactId>endless-sequence</artifactId>
 
     <build>
-        <finalName>tropical-island</finalName>
+        <finalName>endless-sequence</finalName>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.kotovdv</groupId>
             <artifactId>tests-common</artifactId>
@@ -36,7 +27,10 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
