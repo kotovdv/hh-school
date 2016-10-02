@@ -31,23 +31,4 @@ public class SequenceFactory {
         return sequences;
     }
 
-
-    public static void main(String[] args) {
-        int i = 1;
-        for (int j = 1; j < 1000; j++) {
-
-            String strPresentation = Integer.toString(j);
-            for (int k = 0; k < strPresentation.length(); k++) {
-                if (k == 0) {
-                    System.out.printf("[%d,%s] NUMBER [" + j + "]%n", i++, strPresentation.charAt(k));
-                } else {
-                    System.out.printf("[%d,%s]%n", i++, strPresentation.charAt(k));
-
-                }
-            }
-
-
-        }
-    }
-
 }

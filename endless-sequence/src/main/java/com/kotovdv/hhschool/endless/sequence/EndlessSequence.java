@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class EndlessSequence {
 
+    //TODO 50 symbols limit
     public static void main(String[] args) {
         EndlessSequence endlessSequence = new EndlessSequence();
         endlessSequence.solve(System.in, System.out);

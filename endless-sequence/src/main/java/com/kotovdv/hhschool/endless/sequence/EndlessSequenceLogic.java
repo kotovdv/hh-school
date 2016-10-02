@@ -9,10 +9,13 @@ import java.util.List;
  */
 public class EndlessSequenceLogic {
 
-
     public int getStartingIndexOf(String sequence) {
         List<Integer> possibleOutputs = new ArrayList<>();
         for (int groupSize = 1; groupSize <= sequence.length(); groupSize++) {
+            if (!possibleOutputs.isEmpty()) {
+                break;
+            }
+
             for (int startIndex = 1 - groupSize, counter = 0; counter < groupSize && (groupSize + startIndex) <= sequence.length(); startIndex++, counter++) {
                 int endIndex = groupSize + startIndex;
 
@@ -20,7 +23,7 @@ public class EndlessSequenceLogic {
                         ? createForUncompleted(sequence, groupSize, startIndex, endIndex)
                         : sequence.substring(startIndex, endIndex);
 
-                if (groupString.isEmpty()) {
+                if (groupString.isEmpty() || groupString.startsWith("0")) {
                     continue;
                 }
 
@@ -30,10 +33,12 @@ public class EndlessSequenceLogic {
                     continue;
                 }
 
-                if (checkSequence(sequence, endIndex, groupSize, currentGroupValue)) {
+                if (isValidSequence(sequence, endIndex, currentGroupValue)) {
                     int indexOf = getIndexOf(currentGroupValue);
 
-                    possibleOutputs.add(indexOf - startIndex);
+                    int offset = indexOf - (startIndex + (groupSize - String.valueOf(currentGroupValue).length()));
+
+                    possibleOutputs.add(offset);
                 }
             }
         }
@@ -80,13 +85,13 @@ public class EndlessSequenceLogic {
             return "";
         }
 
-        if (Integer.toString(i + 1).length() > groupSize - 1) {
-            resultingGroupString = String.valueOf(Integer.parseInt(nextGroupString) - 1) + groupString;
+        if (Integer.toString(i + 1).length() > groupString.length()) {
+            resultingGroupString = merge(String.valueOf(Integer.parseInt(nextGroupString) - 1), groupString, groupSize);
         } else {
             resultingGroupString = nextGroupString.substring(0, groupSize - groupString.length()) + groupString;
         }
 
-        return resultingGroupString.substring(0, groupSize);
+        return resultingGroupString.substring(getSafeStartIndex(resultingGroupString.length() - groupSize), resultingGroupString.length());
     }
 
     private int getNumberOfValuesBetweenRanks(int j) {
@@ -102,28 +107,25 @@ public class EndlessSequenceLogic {
                 : (int) Math.pow(10, j) - 1;
     }
 
-
-    private boolean checkSequence(String sequence, int indexFrom, int groupSize, int previousNumber) {
+    private boolean isValidSequence(String sequence, int indexFrom, int previousNumber) {
         int previousGroupValue = previousNumber;
 
-        for (int j = indexFrom; j < sequence.length(); ) {
-            int currentEndIndex = getSafeEndIndex(sequence, j + groupSize);
-
-            String currentGroup = sequence.substring(j, currentEndIndex);
-            if (currentGroup.length() != groupSize || Integer.toString(previousGroupValue + 1).length() > groupSize) {
-                String expectedNextValue = Integer.toString(previousGroupValue + 1);
-
-                return expectedNextValue.startsWith(currentGroup);
+        for (int currentStartIndex = indexFrom; currentStartIndex < sequence.length(); ) {
+            String actualNextValue = Integer.toString(previousGroupValue + 1);
+            int safeEndIndex = getSafeEndIndex(sequence, currentStartIndex + actualNextValue.length());
+            String existingNextValue = sequence.substring(currentStartIndex, safeEndIndex);
+            if (actualNextValue.length() == existingNextValue.length()) {
+                if (!actualNextValue.equals(existingNextValue)) {
+                    return false;
+                }
+            } else {
+                if (!actualNextValue.startsWith(existingNextValue)) {
+                    return false;
+                }
             }
 
-
-            int currentGroupValue = Integer.parseInt(currentGroup);
-            if (currentGroupValue != (previousGroupValue + 1)) {
-                return false;
-            }
-
-            previousGroupValue = currentGroupValue;
-            j = currentEndIndex;
+            currentStartIndex = safeEndIndex;
+            previousGroupValue = Integer.parseInt(actualNextValue);
         }
 
 
@@ -147,4 +149,40 @@ public class EndlessSequenceLogic {
                 : sequence.length();
     }
 
+
+    private String merge(String slaveSeq, String masterSeq, int expectedLength) {
+        String modifiedSlaveSeq = appendEmptySpaces(slaveSeq, expectedLength);
+        String modifiedMasterSeq = precedeWithEmptySpaces(masterSeq, expectedLength);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = modifiedMasterSeq.length() - 1; i >= 0; i--) {
+            char c = modifiedMasterSeq.charAt(i);
+            if (c != ' ') {
+                stringBuilder.insert(0, c);
+            } else {
+                stringBuilder.insert(0, modifiedSlaveSeq.charAt(i));
+            }
+        }
+
+        return stringBuilder.toString().trim();
+    }
+
+
+    private String precedeWithEmptySpaces(String value, int expectedLength) {
+        StringBuilder stringBuilder = new StringBuilder(value);
+        while (stringBuilder.length() < expectedLength) {
+            stringBuilder.insert(0, " ");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private String appendEmptySpaces(String value, int expectedLength) {
+        StringBuilder stringBuilder = new StringBuilder(value);
+        while (stringBuilder.length() < expectedLength) {
+            stringBuilder.append(" ");
+        }
+
+        return stringBuilder.toString();
+    }
 }
