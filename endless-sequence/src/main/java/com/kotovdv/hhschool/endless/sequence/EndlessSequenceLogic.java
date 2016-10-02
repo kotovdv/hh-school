@@ -36,9 +36,7 @@ public class EndlessSequenceLogic {
                 if (isValidSequence(sequence, endIndex, currentGroupValue)) {
                     int indexOf = getIndexOf(currentGroupValue);
 
-                    int offset = indexOf - (startIndex + (groupSize - String.valueOf(currentGroupValue).length()));
-
-                    possibleOutputs.add(offset);
+                    possibleOutputs.add(indexOf - startIndex);
                 }
             }
         }
@@ -102,9 +100,9 @@ public class EndlessSequenceLogic {
     }
 
     private int getBorderValue(int j) {
-        return j <= 0
-                ? 0
-                : (int) Math.pow(10, j) - 1;
+        return j > 0
+                ? (int) Math.pow(10, j) - 1
+                : 0;
     }
 
     private boolean isValidSequence(String sequence, int indexFrom, int previousNumber) {
