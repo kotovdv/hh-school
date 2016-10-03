@@ -15,11 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SequenceLocationDetectorTest {
 
 
-    @DataProvider(parallel = true)
+    @DataProvider
     public static Object[][] dataProvider() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        int maxValue = 10_000;
+        int maxValue = 500;
         for (int i = 1; i <= maxValue; i++) {
             stringBuilder.append(Integer.toString(i));
         }

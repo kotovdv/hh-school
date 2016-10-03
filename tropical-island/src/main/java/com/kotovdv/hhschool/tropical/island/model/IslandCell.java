@@ -32,8 +32,7 @@ public class IslandCell {
 
         IslandCell cell = (IslandCell) o;
 
-        if (rowNumber != cell.rowNumber) return false;
-        return columnNumber == cell.columnNumber;
+        return rowNumber == cell.rowNumber && columnNumber == cell.columnNumber;
 
     }
 

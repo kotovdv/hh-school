@@ -1,4 +1,4 @@
-package com.kotovdv.hhschool.tests.common;
+package data.provider;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;

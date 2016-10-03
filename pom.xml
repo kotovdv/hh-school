@@ -9,7 +9,6 @@
     <packaging>pom</packaging>
     <version>0.1</version>
     <modules>
-        <module>tests-common</module>
         <module>tropical-island</module>
         <module>endless-sequence</module>
     </modules>
@@ -39,11 +38,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.kotovdv</groupId>
-                <artifactId>tests-common</artifactId>
-                <version>0.1</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>

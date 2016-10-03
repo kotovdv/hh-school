@@ -1,4 +1,5 @@
-import com.kotovdv.hhschool.tests.common.InputOutputFactory;
+package data.provider;
+
 import org.testng.annotations.DataProvider;
 
 /**

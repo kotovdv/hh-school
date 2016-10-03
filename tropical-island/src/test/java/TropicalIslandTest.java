@@ -1,4 +1,5 @@
 import com.kotovdv.hhschool.tropical.island.TropicalIsland;
+import data.provider.TropicalIslandDataProvider;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
