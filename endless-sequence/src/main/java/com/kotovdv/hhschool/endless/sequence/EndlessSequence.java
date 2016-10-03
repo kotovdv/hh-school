@@ -1,9 +1,11 @@
 package com.kotovdv.hhschool.endless.sequence;
 
-import com.kotovdv.hhschool.endless.sequence.service.SequenceFactory;
+import com.kotovdv.hhschool.endless.sequence.logic.SequenceLocationDetector;
+import com.kotovdv.hhschool.endless.sequence.util.SequenceFactory;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -11,7 +13,6 @@ import java.util.List;
  */
 public class EndlessSequence {
 
-    //TODO 50 symbols limit
     public static void main(String[] args) {
         EndlessSequence endlessSequence = new EndlessSequence();
         endlessSequence.solve(System.in, System.out);
@@ -20,10 +21,10 @@ public class EndlessSequence {
 
     public void solve(final InputStream inputStream, final PrintStream outputStream) {
         List<String> sequence = SequenceFactory.create(inputStream);
-        EndlessSequenceLogic endlessSequenceLogic = new EndlessSequenceLogic();
+        SequenceLocationDetector sequenceLocationDetector = new SequenceLocationDetector();
 
         sequence.forEach(currentSequence -> {
-            int startingIndex = endlessSequenceLogic.getStartingIndexOf(currentSequence);
+            BigInteger startingIndex = sequenceLocationDetector.findIndexOf(currentSequence);
             outputStream.println(startingIndex);
         });
 

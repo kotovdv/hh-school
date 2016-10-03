@@ -2,7 +2,7 @@ package com.kotovdv.hhschool.tropical.island;
 
 import com.kotovdv.hhschool.tropical.island.logic.FloodingSimulator;
 import com.kotovdv.hhschool.tropical.island.model.Island;
-import com.kotovdv.hhschool.tropical.island.service.IslandFactory;
+import com.kotovdv.hhschool.tropical.island.util.IslandFactory;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class TropicalIsland {
 
+    //TODO 50x50 1000
     public static void main(String[] args) {
         TropicalIsland tropicalIsland = new TropicalIsland();
         tropicalIsland.solve(System.in, System.out);

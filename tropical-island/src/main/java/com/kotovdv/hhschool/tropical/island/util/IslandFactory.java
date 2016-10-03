@@ -1,4 +1,4 @@
-package com.kotovdv.hhschool.tropical.island.service;
+package com.kotovdv.hhschool.tropical.island.util;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;

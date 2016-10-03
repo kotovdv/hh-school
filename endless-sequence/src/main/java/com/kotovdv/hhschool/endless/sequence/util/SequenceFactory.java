@@ -1,4 +1,4 @@
-package com.kotovdv.hhschool.endless.sequence.service;
+package com.kotovdv.hhschool.endless.sequence.util;
 
 
 import java.io.BufferedReader;
