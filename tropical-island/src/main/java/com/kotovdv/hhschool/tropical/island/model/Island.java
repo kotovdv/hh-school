@@ -16,6 +16,10 @@ public class Island {
         this.islandMap = islandMap;
     }
 
+    public Table<Integer, Integer, Integer> getIslandMap() {
+        return Tables.unmodifiableTable(islandMap);
+    }
+
     public int getRowsCount() {
         return islandMap.rowKeySet().size();
     }
@@ -80,9 +84,5 @@ public class Island {
 
 
         return table.toString();
-    }
-
-    public Table<Integer, Integer, Integer> getIslandMap() {
-        return Tables.unmodifiableTable(islandMap);
     }
 }

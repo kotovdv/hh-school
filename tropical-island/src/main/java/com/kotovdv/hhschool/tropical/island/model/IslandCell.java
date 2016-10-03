@@ -40,6 +40,7 @@ public class IslandCell {
     public int hashCode() {
         int result = rowNumber;
         result = 31 * result + columnNumber;
+
         return result;
     }
 

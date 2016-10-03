@@ -7,7 +7,7 @@
     <groupId>com.kotovdv</groupId>
     <artifactId>hhschool</artifactId>
     <packaging>pom</packaging>
-    <version>0.1</version>
+    <version>1.0</version>
     <modules>
         <module>tropical-island</module>
         <module>endless-sequence</module>
@@ -59,7 +59,6 @@
                 <version>${poi-ooxml.version}</version>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
 
 

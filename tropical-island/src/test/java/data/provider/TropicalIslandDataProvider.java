@@ -7,7 +7,7 @@ import org.testng.annotations.DataProvider;
  */
 public class TropicalIslandDataProvider {
 
-    private static final String TEST_SAMPLES_URL = "https://docs.google.com/spreadsheets/d/1cVIr-VTsfJJf-J7jwwqD-nKT6p516iV3stDr2n27LhQ/pub?output=xlsx";
+    private static final String TEST_SAMPLES_URL = "tests.xlsx";
     private static final String SHEET_NAME = "tropical_island";
 
 

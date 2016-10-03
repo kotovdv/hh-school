@@ -65,7 +65,6 @@ public class IslandFactory {
         }
 
         return seashoreTable;
-
     }
 
 }

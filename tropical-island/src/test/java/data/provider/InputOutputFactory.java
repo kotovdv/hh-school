@@ -1,12 +1,12 @@
 package data.provider;
 
+import com.sun.org.apache.bcel.internal.util.ClassLoader;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class InputOutputFactory {
     private List<InputOutput> gather(String url, String sheetName) {
         List<InputOutput> inputOutputs = new ArrayList<>();
 
-        try (Workbook workbook = new XSSFWorkbook(new URL(url).openStream())) {
+        try (Workbook workbook = new XSSFWorkbook(ClassLoader.getSystemResource(url).openStream())) {
             Sheet scenarios = workbook.getSheet(sheetName);
 
             scenarios.forEach(currentRow -> {
