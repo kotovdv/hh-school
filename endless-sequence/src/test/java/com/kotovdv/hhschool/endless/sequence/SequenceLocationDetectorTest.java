@@ -39,7 +39,7 @@ public class SequenceLocationDetectorTest {
     @Test(dataProvider = "dataProvider")
     public void testGetStartingIndexOf(String sequence, BigInteger expectedIndex) throws Exception {
         SequenceLocationDetector sequenceLocationDetector = new SequenceLocationDetector();
-        BigInteger actualIndex = sequenceLocationDetector.findIndexOf(sequence);
+        BigInteger actualIndex = sequenceLocationDetector.findIndex(sequence);
 
         assertThat(actualIndex).isEqualTo(expectedIndex);
     }

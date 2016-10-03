@@ -18,14 +18,13 @@ public class EndlessSequence {
         endlessSequence.solve(System.in, System.out);
     }
 
-
-    public void solve(final InputStream inputStream, final PrintStream outputStream) {
+    private void solve(final InputStream inputStream, final PrintStream outputStream) {
         List<String> sequence = SequenceFactory.create(inputStream);
         SequenceLocationDetector sequenceLocationDetector = new SequenceLocationDetector();
 
         sequence.forEach(currentSequence -> {
-            BigInteger startingIndex = sequenceLocationDetector.findIndexOf(currentSequence);
-            outputStream.println(startingIndex);
+            BigInteger index = sequenceLocationDetector.findIndex(currentSequence);
+            outputStream.println(index);
         });
 
     }

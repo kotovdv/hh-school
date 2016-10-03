@@ -20,23 +20,24 @@ public class SequenceLocationDetector {
 
     private final EndlessSequence endlessSequence = new EndlessSequence();
 
-    public BigInteger findIndexOf(String sequence) {
+    /**
+     * Searches for index of first appearance of given sequence in endless sequence
+     */
+    public BigInteger findIndex(String sequence) {
         List<BigInteger> possibleOutputs = new ArrayList<>();
-        for (int groupSize = 1; groupSize <= sequence.length(); groupSize++) {
+        for (int numberLength = 1; numberLength <= sequence.length(); numberLength++) {
 
-            for (int startIndex = 1 - groupSize, i = 0; i < groupSize && (groupSize + startIndex) <= sequence.length(); startIndex++, i++) {
-                int endIndex = groupSize + startIndex;
+            for (int startIndex = 1 - numberLength; startIndex < 1; startIndex++) {
+                int endIndex = startIndex + numberLength;
 
-                String currentGroup = createCurrentGroup(sequence, groupSize, startIndex, endIndex);
+                String currentNumber = createNumber(sequence, numberLength, startIndex, endIndex);
 
-                if (currentGroup.isEmpty()) {
+                if (currentNumber.isEmpty()) {
                     continue;
                 }
 
-                if (endlessSequence.contains(currentGroup, sequence.substring(endIndex, sequence.length()))) {
-                    BigInteger indexOf = endlessSequence.indexOf(bigInteger(currentGroup));
-
-                    possibleOutputs.add(indexOf.subtract(bigInteger(startIndex)));
+                if (endlessSequence.contains(currentNumber, sequence.substring(endIndex, sequence.length()))) {
+                    possibleOutputs.add(getSequenceStartIndex(startIndex, currentNumber));
                 }
             }
 
@@ -48,19 +49,25 @@ public class SequenceLocationDetector {
         return Collections.min(possibleOutputs);
     }
 
+    private BigInteger getSequenceStartIndex(int startIndex, String number) {
+        BigInteger indexOfNumber = endlessSequence.indexOf(bigInteger(number));
 
-    private String createCurrentGroup(String sequence, int groupSize, int startIndex, int endIndex) {
+        return indexOfNumber.subtract(bigInteger(startIndex));
+    }
+
+
+    private String createNumber(String sequence, int numberSize, int startIndex, int endIndex) {
         if (startIndex < 0) {
             return finishSequences(
                     sequence.substring(startIndex(startIndex), endIndex),
-                    sequence.substring(endIndex, endIndex(sequence, endIndex + groupSize)),
-                    groupSize);
+                    sequence.substring(endIndex, endIndex(sequence, endIndex + numberSize)),
+                    numberSize);
         } else {
             return sequence.substring(startIndex, endIndex);
         }
     }
 
-    private String finishSequences(String leftPart, String rightPart, int groupSize) {
+    private String finishSequences(String leftPart, String rightPart, int numberLength) {
         if (rightPart.startsWith("0")) {
             return "";
         }
@@ -68,12 +75,12 @@ public class SequenceLocationDetector {
         int leftPartLength = leftPart.length();
 
         String resultingString = plusOne(leftPart).length() > leftPartLength
-                ? Sequences.merge(minusOne(rightPart), leftPart, groupSize)
-                : rightPart.substring(0, groupSize - leftPartLength) + leftPart;
+                ? Sequences.merge(minusOne(rightPart), leftPart, numberLength)
+                : rightPart.substring(0, numberLength - leftPartLength) + leftPart;
 
         int resultLength = resultingString.length();
 
-        return resultingString.substring(startIndex(resultLength - groupSize), resultLength);
+        return resultingString.substring(startIndex(resultLength - numberLength), resultLength);
     }
 
 }
