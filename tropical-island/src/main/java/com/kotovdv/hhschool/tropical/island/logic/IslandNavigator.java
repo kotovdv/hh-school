@@ -1,6 +1,6 @@
 package com.kotovdv.hhschool.tropical.island.logic;
 
-import com.kotovdv.hhschool.tropical.island.exception.MissingCellException;
+import com.kotovdv.hhschool.tropical.island.exception.IslandIsNotApplicableException;
 import com.kotovdv.hhschool.tropical.island.model.Island;
 import com.kotovdv.hhschool.tropical.island.model.IslandCell;
 
@@ -23,6 +23,32 @@ public class IslandNavigator {
         sideFunctions.add(new LeftCellFunction());
     }
 
+    /**
+     * @return All inner non seashore/non border cells
+     */
+    public List<IslandCell> getInnerCells(Island island) {
+        if (!hasApplicableSize(island)) {
+            throw new IslandIsNotApplicableException(island);
+        }
+
+        List<IslandCell> cells = new ArrayList<>();
+        for (int i = 2; i < island.getRowsCount(); i++) {
+            for (int j = 2; j < island.getColumnCount(i); j++) {
+                cells.add(IslandCell.of(i, j));
+            }
+        }
+
+        return cells;
+    }
+
+
+    /**
+     * It is impossible to flood island that is less then 3x3 (4x4 with seashore)
+     */
+    public boolean hasApplicableSize(Island island) {
+        return island.rowCount() >= 4 && island.cellCount() >= 4;
+    }
+
 
     public List<IslandCell> getSurroundingCells(Island island, IslandCell cell) {
         List<IslandCell> surroundingCells = new ArrayList<>();
@@ -39,11 +65,7 @@ public class IslandNavigator {
 
 
     public boolean isLowland(Island island, IslandCell cell) {
-        Optional<Integer> value = island.optionalValue(cell);
-        if (!value.isPresent()) {
-            throw new MissingCellException(cell);
-        }
-        Integer cellValue = value.get();
+        int cellValue = island.value(cell);
 
         List<IslandCell> surroundingCells = getSurroundingCells(island, cell);
 

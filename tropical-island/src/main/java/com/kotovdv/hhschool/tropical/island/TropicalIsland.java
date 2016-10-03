@@ -13,7 +13,6 @@ import java.util.List;
  */
 public class TropicalIsland {
 
-    //TODO 50x50 1000
     public static void main(String[] args) {
         TropicalIsland tropicalIsland = new TropicalIsland();
         tropicalIsland.solve(System.in, System.out);

@@ -58,7 +58,7 @@ public class SequenceLocationDetector {
 
     private String createNumber(String sequence, int numberSize, int startIndex, int endIndex) {
         if (startIndex < 0) {
-            return finishSequences(
+            return completeNumbers(
                     sequence.substring(startIndex(startIndex), endIndex),
                     sequence.substring(endIndex, endIndex(sequence, endIndex + numberSize)),
                     numberSize);
@@ -67,7 +67,7 @@ public class SequenceLocationDetector {
         }
     }
 
-    private String finishSequences(String leftPart, String rightPart, int numberLength) {
+    private String completeNumbers(String leftPart, String rightPart, int numberLength) {
         if (rightPart.startsWith("0")) {
             return "";
         }

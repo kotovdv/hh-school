@@ -10,19 +10,18 @@ import java.util.Optional;
  */
 public class Island {
 
-    //TODO prb would be wise to switch to regular array after all
-    private final Table<Integer, Integer, Integer> table;
+    private final Table<Integer, Integer, Integer> islandMap;
 
-    public Island(Table<Integer, Integer, Integer> table) {
-        this.table = table;
+    public Island(Table<Integer, Integer, Integer> islandMap) {
+        this.islandMap = islandMap;
     }
 
     public int getRowsCount() {
-        return table.rowKeySet().size();
+        return islandMap.rowKeySet().size();
     }
 
     public int getColumnCount(int rowNum) {
-        return table.row(rowNum).size();
+        return islandMap.row(rowNum).size();
     }
 
     public void setValue(IslandCell cell, int value) {
@@ -30,7 +29,7 @@ public class Island {
     }
 
     public void setValue(int row, int column, int value) {
-        table.put(row, column, value);
+        islandMap.put(row, column, value);
     }
 
     public int value(IslandCell cell) {
@@ -38,7 +37,7 @@ public class Island {
     }
 
     public int value(int row, int cell) {
-        return table.get(row, cell);
+        return islandMap.get(row, cell);
     }
 
     public Optional<Integer> optionalValue(IslandCell cell) {
@@ -46,20 +45,7 @@ public class Island {
     }
 
     public Optional<Integer> optionalValue(int row, int cell) {
-        return Optional.ofNullable(table.get(row, cell));
-    }
-
-    public boolean isBorder(IslandCell cell) {
-        return isBorder(cell.getRowNumber(), cell.getColumnNumber());
-    }
-
-
-    public boolean isBorder(int row, int column) {
-        if (row == 0 || row == (rowCount() - 1)) {
-            return true;
-        } else {
-            return column == 0 || column == (cellCount() - 1);
-        }
+        return Optional.ofNullable(islandMap.get(row, cell));
     }
 
     public boolean isCellPresent(IslandCell cell) {
@@ -67,19 +53,19 @@ public class Island {
     }
 
     public boolean isCellPresent(int row, int column) {
-        return table.contains(row, column);
+        return islandMap.contains(row, column);
     }
 
     public int sum() {
-        return table.values().stream().mapToInt(Integer::intValue).sum();
+        return islandMap.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     public int cellCount() {
-        return table.columnKeySet().size();
+        return islandMap.columnKeySet().size();
     }
 
     public int rowCount() {
-        return table.rowKeySet().size();
+        return islandMap.rowKeySet().size();
     }
 
     @Override
@@ -96,7 +82,7 @@ public class Island {
         return table.toString();
     }
 
-    public Table<Integer, Integer, Integer> getTable() {
-        return Tables.unmodifiableTable(table);
+    public Table<Integer, Integer, Integer> getIslandMap() {
+        return Tables.unmodifiableTable(islandMap);
     }
 }
