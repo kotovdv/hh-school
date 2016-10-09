@@ -7,6 +7,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +22,8 @@ public class InputOutputFactory {
     private static final int OUTPUT_CELL = 1;
     private final DataFormatter formatter = new DataFormatter();
 
-    public Object[][] create(String url, String sheetName) {
-        List<InputOutput> inputOutputs = gather(url, sheetName);
+    public Object[][] create(String url, String sheetName, boolean isInternal) {
+        List<InputOutput> inputOutputs = gather(url, sheetName, isInternal);
 
         Object[][] objects = new Object[inputOutputs.size()][1];
         for (int i = 0; i < inputOutputs.size(); i++) {
@@ -34,10 +37,10 @@ public class InputOutputFactory {
     }
 
 
-    private List<InputOutput> gather(String url, String sheetName) {
+    private List<InputOutput> gather(String url, String sheetName, boolean isInternal) {
         List<InputOutput> inputOutputs = new ArrayList<>();
 
-        try (Workbook workbook = new XSSFWorkbook(ClassLoader.getSystemResource(url).openStream())) {
+        try (Workbook workbook = new XSSFWorkbook(extractStream(url, isInternal))) {
             Sheet scenarios = workbook.getSheet(sheetName);
 
             scenarios.forEach(currentRow -> {
@@ -53,6 +56,12 @@ public class InputOutputFactory {
         }
 
         return inputOutputs;
+    }
+
+    private InputStream extractStream(String url, boolean isInternal) throws IOException {
+        return isInternal
+                ? ClassLoader.getSystemResourceAsStream(url)
+                : new URL(url).openStream();
     }
 
     private String getCellValue(Row row, int cellIndex) {

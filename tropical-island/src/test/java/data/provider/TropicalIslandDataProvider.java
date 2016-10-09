@@ -13,6 +13,6 @@ public class TropicalIslandDataProvider {
 
     @DataProvider
     public static Object[][] dataProvider() {
-        return new InputOutputFactory().create(TEST_SAMPLES_URL, SHEET_NAME);
+        return new InputOutputFactory().create(TEST_SAMPLES_URL, SHEET_NAME, true);
     }
 }
